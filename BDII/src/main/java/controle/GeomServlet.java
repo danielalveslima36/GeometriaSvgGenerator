@@ -1,6 +1,8 @@
 package controle;
 
+import com.sun.corba.se.impl.oa.poa.POAImpl;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import modelo.Svg;
@@ -10,7 +12,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.Reader;
 
 @WebServlet("/geom")
 public class GeomServlet extends HttpServlet {
@@ -22,13 +26,23 @@ public class GeomServlet extends HttpServlet {
         WKTReader reader = new WKTReader();
 
         try {
-            Svg geom1 = new Svg(reader.read(geometria1));
-            Svg geom2 = new Svg(reader.read(geometria2));
-            Svg VB = new Svg(reader.read(geometria1).union(reader.read(geometria2)));
+            Geometry geomA = reader.read(geometria1);
+            Geometry geomB = reader.read(geometria2);
 
-            req.setAttribute("geom1", geom1.getPath());
-            req.setAttribute("geom2", geom2.getPath());
-            req.setAttribute("vb", VB.getViewBox());
+            Svg geom1 = new Svg(geomA);
+            Svg geom2 = new Svg(geomB);
+            Svg VB = new Svg(geomA.union(geomB));
+
+            HttpSession session = req.getSession();
+
+            session.setAttribute("geom1", geom1.getPath());
+            session.setAttribute("geom2", geom2.getPath());
+            session.setAttribute("vb", VB.getViewBox());
+            session.setAttribute("corA", "none");
+            session.setAttribute("corB", "none");
+
+
+
             req.getRequestDispatcher("index.jsp").forward(req, resp);
 
         } catch (ParseException e) {
@@ -39,6 +53,4 @@ public class GeomServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
-
-
 }

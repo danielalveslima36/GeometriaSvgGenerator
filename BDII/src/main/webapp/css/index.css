@@ -3,7 +3,23 @@
     padding-top: 20px;
 }
 
+#formulario{
+    margin-top: 20px;
+}
+
 svg{
-    height: 100%;
     width: 75%;
+}
+
+button{
+    float: right;
+}
+
+.options{
+    margin-top: 50px;
+}
+
+.options p{
+    text-align: center;
+    font-size: medium;
 }
